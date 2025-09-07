@@ -26,5 +26,7 @@ app.include_router(
 )
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    port = int(os.getenv("PORT", 10000))  # Use PORT from environment, default to 10000 if unset
+    uvicorn.run(app, host="0.0.0.0", port=port)
