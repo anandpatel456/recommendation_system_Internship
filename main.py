@@ -3,7 +3,6 @@ from app.routers import recommendations
 from app.core.db import db
 from fastapi.middleware.cors import CORSMiddleware
 
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -13,12 +12,14 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.get("/")
+@app.get("/")
 async def root():
     return {"message": "Welcome to the Job Recommender API"}
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
 app.include_router(
     recommendations.router,
     prefix="/api/recommend",
