@@ -19,12 +19,24 @@ class HybridRecommender:
         # 2. Collaborative filtering
         swipe_scores = self._calculate_swipe_scores(user.clerk_id, swipes, jobs)
         
-        # 3. Hybrid scoring
+        # 3. Hybrid scoring with priority boost for posted jobs
         results = []
         for idx, job in enumerate(jobs):
-            score = (0.6 * content_scores[idx]) + (0.4 * swipe_scores.get(job.id, 0))
-            results.append((job, score))
-        rr = sorted(results, key=lambda x: -x[1])  # Sort by score descending
+            # Base content and collaborative scores
+            content_score = content_scores[idx]
+            swipe_score = swipe_scores.get(job.id, 0)
+            
+            # Priority boost for posted jobs (source priority)
+            priority_boost = getattr(job, 'priority', 0.5)  # Default to 0.5 for scraped jobs
+            
+            # Calculate final score with priority boost
+            base_score = (0.6 * content_score) + (0.4 * swipe_score)
+            final_score = base_score + (priority_boost * 0.3)  # Add up to 30% boost for posted jobs
+            
+            results.append((job, final_score))
+        
+        # Sort by score descending (highest scores first)
+        rr = sorted(results, key=lambda x: -x[1])
         return rr
     
     async def _embed_user(self, user: UserProfile) -> np.ndarray:
