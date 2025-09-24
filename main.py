@@ -30,4 +30,4 @@ if __name__ == "__main__":
     import os
     import uvicorn
     port = int(os.getenv("PORT", 3000))  # Use PORT from environment, default to 3000 if unset
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port) ##Test 
