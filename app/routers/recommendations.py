@@ -55,17 +55,19 @@ async def create_user(request: CreateUserRequest):
             "first_name": request.first_name,
             "last_name": request.last_name,
             "role": request.role,
-            "skills": request.skills,
-            "location": request.location,
+            "skills": request.skills if request.skills is not None else [],
+            "location": request.location if request.location is not None else "",
             "profile_complete": True,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
-        
-        # Add role-specific fields
+
+        # Only add company_name for employers
         if request.role == "employer" and request.company_name:
             user_data["company_name"] = request.company_name
-        
+
+        print(f"[DEBUG] user_data to insert: {user_data}")
+
         # Create user in MongoDB
         user_id = await db.create_user(user_data)
         if user_id:
